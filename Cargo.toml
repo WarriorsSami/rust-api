@@ -2,7 +2,10 @@
 name = "rust-api"
 version = "0.1.0"
 edition = "2018"
+authors = ["Sami Barbut-Dica (https://github.com/WarriorsSami)"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+diesel = { version = "1.0.0", features = ["postgres"] }
+dotenv = "0.9.0"
