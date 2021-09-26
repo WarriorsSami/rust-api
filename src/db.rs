@@ -13,6 +13,7 @@ pub fn init_pool(db_url: String) -> Pool {
     r2d2::Pool::new(manager).expect("Error creating db pool")
 }
 
+// Request Guards == Middleware
 pub struct Conn(pub r2d2::PooledConnection<ConnectionManager<PgConnection>>);
 
 impl<'a, 'r> FromRequest<'a, 'r> for Conn {
@@ -21,7 +22,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Conn {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Conn, ()> {
         let pool = request.guard::<State<Pool>>()?;
         match pool.get() {
-            OK(conn) => Outcome::Success(Conn(conn)),
+            Ok(conn) => Outcome::Success(Conn(conn)),
             Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),
         }
     }

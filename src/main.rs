@@ -21,31 +21,19 @@ use diesel::pg::PgConnection;
 mod schema;
 mod models;
 mod db;
+mod static_files;
 
-//#[get("/<name>/<age>")]
-//fn hello(name: String, age: u8) -> String {
-//    format!("Hello, {} year old named {}!", age, name)
-//}
-
-fn main() {
+fn rocket() -> rocket::Rocket {
     dotenv().ok();
 
-    //rocket::ignite()
-    //    .mount("/hello", routes![hello])
-    //    .launch();
+    let database_url = env::var("DATABASE_URL").expect("set DATABASE_URL");
+    let pool = db::init_pool(database_url);
 
-    /*let database_url = env::var("DATABASE_URL").expect("set DATABASE_URL");
-    let conn = PgConnection::establish(&database_url).unwrap();
+    rocket::ignite()
+        .manage(pool)
+        .mount("/", routes![static_files::all, static_files::index])
+}
 
-    let book = models::NewBook {
-        title: String::from("Miez de noapte"),
-        author: String::from("Erin Hunter"),
-        published: true,
-    };
-
-    if models::Book::insert(book, &conn) {
-        println!("success");
-    } else {
-        println!("failed");
-    }*/
+fn main() {
+    rocket().launch();
 }
