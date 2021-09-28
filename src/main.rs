@@ -13,16 +13,16 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 
-use dotenv::dotenv;
-use std::env;
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
-
 mod schema;
 mod models;
 mod db;
 mod static_files;
 mod routes;
+
+use dotenv::dotenv;
+use std::env;
+use routes::*;
+use static_files::*;
 
 fn rocket() -> rocket::Rocket {
     dotenv().ok();
@@ -32,7 +32,12 @@ fn rocket() -> rocket::Rocket {
 
     rocket::ignite()
         .manage(pool)
-        .mount("/", routes![static_files::all, static_files::index])
+        .mount(
+            "/api/v1/",
+            routes![show_all, new, show_by_id, update, delete, show_by_author],
+        )
+        .mount("/", routes![all, index])
+        .register(catchers![not_found])
 }
 
 fn main() {
