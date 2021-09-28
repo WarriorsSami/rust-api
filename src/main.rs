@@ -22,6 +22,7 @@ mod schema;
 mod models;
 mod db;
 mod static_files;
+mod routes;
 
 fn rocket() -> rocket::Rocket {
     dotenv().ok();
